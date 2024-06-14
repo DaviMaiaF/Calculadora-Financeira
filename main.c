@@ -4,14 +4,18 @@
 #include <string.h>
 #include <ctype.h>
 
-// Definição da estrutura da pilha
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+// Estrutura da pilha
 typedef struct {
     double *data;
     int top;
     int capacity;
 } Stack;
 
-// Funções da pilha
+// FunÃ§Ãµes da pilha
 Stack* createStack(int capacity) {
     Stack *stack = (Stack *) malloc(sizeof(Stack));
     stack->capacity = capacity;
@@ -46,12 +50,12 @@ double peek(Stack *stack) {
     return stack->data[stack->top];
 }
 
-// Função para verificar se o caractere é um operador
+// Encontrar operador como caractere
 int isOperator(char c) {
     return c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
 }
 
-// Função para realizar as operações matemáticas básicas
+// FunÃ§Ã£o para realizar as operaÃ§Ãµes matemÃ¡ticas convencionais
 double performOperation(double a, double b, char operator) {
     switch (operator) {
         case '+': return a + b;
@@ -63,17 +67,17 @@ double performOperation(double a, double b, char operator) {
     }
 }
 
-// Funções especiais
+// FunÃ§Ãµes de trigonometria
 double performSpecialOperation(const char *operation, double operand) {
     if (strcmp(operation, "raiz") == 0) return sqrt(operand);
-    if (strcmp(operation, "sen") == 0) return sin(operand);
-    if (strcmp(operation, "cos") == 0) return cos(operand);
-    if (strcmp(operation, "tg") == 0) return tan(operand);
+    if (strcmp(operation, "sen") == 0) return sin(operand * M_PI / 180.0);  // Converte graus para radianos
+    if (strcmp(operation, "cos") == 0) return cos(operand * M_PI / 180.0);  // Converte graus para radianos
+    if (strcmp(operation, "tg") == 0) return tan(operand * M_PI / 180.0);   // Converte graus para radianos
     if (strcmp(operation, "log") == 0) return log10(operand);
     return 0;
 }
 
-// Avaliação da expressão pós-fixada
+// AvaliaÃ§Ã£o da expressÃ£o pÃ³s-fixada
 double evaluatePostfix(const char *expression) {
     Stack *stack = createStack(strlen(expression));
     char token[20];
@@ -116,29 +120,22 @@ double evaluatePostfix(const char *expression) {
     return result;
 }
 
-// Função principal para leitura e avaliação da expressão
+// FunÃ§Ã£o principal para leitura e avaliaÃ§Ã£o
 int main() {
     char expression[256];
 
     while (1) {
-        printf("Digite uma expressão em notação pós-fixada (ou 'sair' para terminar): ");
+        printf("Digite uma expressao em notacao pos-fixada (ou 'sair' para finalizar): ");
         fgets(expression, 256, stdin);
         if (strncmp(expression, "sair", 4) == 0) {
             break;
         }
         expression[strcspn(expression, "\n")] = 0;  // Remove o newline
 
-        printf("Digite o resultado esperado: ");
-        double expected;
-        scanf("%lf", &expected);
-        getchar();  // Limpar o buffer de entrada
-
         double result = evaluatePostfix(expression);
-        printf("Resultado esperado: %.8f\n", expected);
-        printf("Resultado obtido: %.8f\n", result);
+        printf("Resultado obtido: %.2f\n", result);
         printf("--------\n");
     }
 
     return 0;
 }
-	
