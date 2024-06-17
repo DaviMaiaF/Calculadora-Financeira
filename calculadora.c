@@ -41,6 +41,40 @@ double peek(Stack *stack)
     return stack->data[stack->top];
 }
 
+// Funções da pilha de strings
+StringStack *createStringStack(int capacity)
+{
+    StringStack *stack = (StringStack *)malloc(sizeof(StringStack));
+    stack->capacity = capacity;
+    stack->top = -1;
+    stack->data = (char **)malloc(stack->capacity * sizeof(char *));
+    return stack;
+}
+
+int isStringStackFull(StringStack *stack)
+{
+    return stack->top == stack->capacity - 1;
+}
+
+int isStringStackEmpty(StringStack *stack)
+{
+    return stack->top == -1;
+}
+
+void pushString(StringStack *stack, const char *item)
+{
+    if (isStringStackFull(stack))
+        return;
+    stack->data[++stack->top] = strdup(item);
+}
+
+char *popString(StringStack *stack)
+{
+    if (isStringStackEmpty(stack))
+        return NULL;
+    return stack->data[stack->top--];
+}
+
 // Funções para operações
 int isOperator(char c)
 {
@@ -132,4 +166,63 @@ double evaluatePostfix(const char *expression)
     free(stack->data);
     free(stack);
     return result;
+}
+
+// Função para imprimir a expressão pós-fixa em notação infixada
+void printInfix(const char *expression)
+{
+    StringStack *stack = createStringStack(strlen(expression));
+    char token[20];
+    int i = 0, j = 0;
+
+    while (expression[i] != '\0')
+    {
+        if (isspace(expression[i]))
+        {
+            i++;
+            continue;
+        }
+
+        if (isdigit(expression[i]) || expression[i] == '.')
+        {
+            while (isdigit(expression[i]) || expression[i] == '.')
+            {
+                token[j++] = expression[i++];
+            }
+            token[j] = '\0';
+            pushString(stack, token);
+            j = 0;
+        }
+        else if (isOperator(expression[i]))
+        {
+            char *b = popString(stack);
+            char *a = popString(stack);
+            char newExpr[256];
+            snprintf(newExpr, sizeof(newExpr), "(%s %c %s)", a, expression[i], b);
+            pushString(stack, newExpr);
+            free(a);
+            free(b);
+            i++;
+        }
+        else if (isalpha(expression[i]))
+        {
+            while (isalpha(expression[i]))
+            {
+                token[j++] = expression[i++];
+            }
+            token[j] = '\0';
+            char *operand = popString(stack);
+            char newExpr[256];
+            snprintf(newExpr, sizeof(newExpr), "%s(%s)", token, operand);
+            pushString(stack, newExpr);
+            free(operand);
+            j = 0;
+        }
+    }
+
+    char *result = popString(stack);
+    printf("%s", result);
+    free(result);
+    free(stack->data);
+    free(stack);
 }

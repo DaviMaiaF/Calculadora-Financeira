@@ -19,6 +19,14 @@ typedef struct
     int capacity;
 } Stack;
 
+// Estrutura da pilha para strings
+typedef struct
+{
+    char **data;
+    int top;
+    int capacity;
+} StringStack;
+
 // Funções da pilha
 Stack *createStack(int capacity);
 int isFull(Stack *stack);
@@ -27,10 +35,20 @@ void push(Stack *stack, double item);
 double pop(Stack *stack);
 double peek(Stack *stack);
 
+// Funções da pilha de strings
+StringStack *createStringStack(int capacity);
+int isStringStackFull(StringStack *stack);
+int isStringStackEmpty(StringStack *stack);
+void pushString(StringStack *stack, const char *item);
+char *popString(StringStack *stack);
+
 // Funções para operações
 int isOperator(char c);
 double performOperation(double a, double b, char operator);
 double performSpecialOperation(const char *operation, double operand);
 double evaluatePostfix(const char *expression);
 
-#endif // STACK_H
+// Função para imprimir a expressão pós-fixa em notação infixada
+void printInfix(const char *expression);
+
+#endif // CALCULADORA_H

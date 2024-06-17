@@ -19,6 +19,11 @@ int main()
         }
         expression[strcspn(expression, "\n")] = 0; // Remove o newline
 
+        printf("Expressao pos-fixada: %s\n", expression);
+        printf("Expressao infixada: ");
+        printInfix(expression);
+        printf("\n");
+
         double result = evaluatePostfix(expression);
         printf("Resultado obtido: %.2f\n", result);
         printf("--------\n");
